@@ -1,0 +1,1322 @@
+.version sol 0.47.0
+
+.macro constructor
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+;; constructor protection
+GETGLOB 6
+THROWIF 51
+TRUE
+SETGLOB 6
+;; end constructor protection
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: ownerPubkey
+;; param: addrNft
+;; param: marketFeeValue
+;; param: addrOwner
+;; param: price
+;; param: marketOwnerAddr
+; constructor Sell
+;; push identifier _price
+GETGLOB 13
+;; >
+;; push identifier marketFeeValue
+PUSH S4
+GREATER
+THROWIFNOT 100
+ACCEPT
+; expValue
+; end expValue
+;; push identifier ownerPubkey
+PUSH S5
+; colValue
+SETGLOB 10
+; end colValue
+; expValue
+; end expValue
+;; push identifier addrNft
+PUSH S4
+; colValue
+SETGLOB 14
+; end colValue
+; expValue
+; end expValue
+;; push identifier addrOwner
+PUSH S2
+; colValue
+SETGLOB 17
+; end colValue
+; expValue
+; end expValue
+;; push identifier price
+PUSH S1
+; colValue
+SETGLOB 13
+; end colValue
+; expValue
+; end expValue
+;; push identifier marketOwnerAddr
+DUP
+; colValue
+SETGLOB 12
+; end colValue
+;; push identifier marketFeeValue
+PUSH S3
+; expValue
+;; fetch _royalty
+GETGLOB 18
+MYADDR
+; end expValue
+XCHG S2
+; colValue
+NEWC
+STU 128
+ROTREV
+PUSHINT 267
+DICTSETB
+SETGLOB 18
+; end colValue
+; end constructor Sell
+BLKDROP 6
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	_checkSteps_internal
+.type	_checkSteps_internal, @function
+CALL $_checkSteps_internal_macro$
+
+.macro _checkSteps_internal_macro
+; function _checkSteps
+;; if
+;; push identifier _steps
+GETGLOB 16
+EQINT 2
+PUSHCONT {
+	; expValue
+	; end expValue
+	FALSE
+	; colValue
+	SETGLOB 15
+	; end colValue
+}
+IF
+;; end if
+; end function _checkSteps
+
+.globl	_genRoyaltyMapping_internal
+.type	_genRoyaltyMapping_internal, @function
+CALL $_genRoyaltyMapping_internal_macro$
+
+.macro _genRoyaltyMapping_internal_macro
+;; ret param: callbacks
+NEWDICT
+; function _genRoyaltyMapping
+PUSHREF {
+}
+;; decl: empty
+;; push identifier _royalty
+GETGLOB 18
+DUP
+PUSHINT 267
+DICTMIN
+PUSHCONT {
+	DUP
+	ROT
+	PLDU 128
+}
+PUSHCONT {
+	NULL
+	NULL
+	NULL
+}
+IFELSE
+PUSHCONT {
+	PUSH S2
+	ISNULL
+	NOT
+}
+PUSHCONT {
+	;; push identifier value
+	;; push identifier empty
+	PUSH2 S0, S4
+	TUPLE 2
+	;; decl: cp
+	; expValue
+	;; push identifier addr
+	; end expValue
+	;; push identifier cp
+	PUSH3 S2, S6, S0
+	; colValue
+	CALLREF {
+		UNTUPLE 2
+		SWAP
+		NEWC
+		STU 128
+		STREF
+	}
+	ROTREV
+	PUSHINT 267
+	DICTSETB
+	POP S7
+	; end colValue
+	DROP
+	PUSH2 S2, S3
+	PUSHINT 267
+	DICTGETNEXT
+	PUSHCONT {
+		DUP
+		ROT
+		PLDU 128
+	}
+	PUSHCONT {
+		NULL
+		NULL
+		NULL
+	}
+	IFELSE
+	BLKDROP2 3, 3
+}
+WHILE
+; end for
+BLKDROP 5
+; end function _genRoyaltyMapping
+
+.globl	_distribute_internal
+.type	_distribute_internal, @function
+CALL $_distribute_internal_macro$
+
+.macro _distribute_internal_macro
+; function _distribute
+;; push identifier _royalty
+GETGLOB 18
+DUP
+PUSHINT 267
+DICTMIN
+PUSHCONT {
+	DUP
+	ROT
+	PLDU 128
+}
+PUSHCONT {
+	NULL
+	NULL
+	NULL
+}
+IFELSE
+PUSHCONT {
+	PUSH S2
+	ISNULL
+	NOT
+}
+PUSHCONT {
+	;; push identifier _price
+	GETGLOB 13
+	;; push identifier value
+	PUSH S1
+	PUSHINT 100
+	MULDIV
+	UFITS 128
+	;; decl: feeValue
+	;; transfer()
+	;; push identifier feeValue
+	;; push identifier addr
+	PUSH2 S0, S2
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	SWAP
+	STGRAMS
+	PUSHINT 107
+	STZEROES
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	DROP
+	PUSH2 S2, S3
+	PUSHINT 267
+	DICTGETNEXT
+	PUSHCONT {
+		DUP
+		ROT
+		PLDU 128
+	}
+	PUSHCONT {
+		NULL
+		NULL
+		NULL
+	}
+	IFELSE
+	BLKDROP2 3, 3
+}
+WHILE
+BLKDROP 4
+; end for
+;; transfer()
+;; push identifier _addrOwner
+GETGLOB 17
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 111
+STZEROES
+ENDC
+PUSHINT 128
+SENDRAWMSG
+; end function _distribute
+
+.globl	getRoyalty_internal
+.type	getRoyalty_internal, @function
+CALL $getRoyalty_internal_macro$
+
+.macro getRoyalty_internal_macro
+; function getRoyalty
+;; Remote call IRoyalty.getRoyalty
+;; push identifier _addrNft
+GETGLOB 14
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHSLICE x398968000000000000000000000000000080366310ecbc7f45_
+STSLICER
+ENDC
+PUSHINT 0
+SENDRAWMSG
+; end function getRoyalty
+
+.macro onGetRoyalty
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDDICT
+ENDS
+;; param: royalty
+; modifier onlyNft
+;; get member sender
+GETGLOB 9
+;; push identifier _addrNft
+GETGLOB 14
+SDEQ
+THROWIFNOT 100
+; function onGetRoyalty
+ACCEPT
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+;; push identifier royalty
+BLKPUSH 2, 0
+PUSHINT 267
+DICTMIN
+PUSHCONT {
+	DUP
+	ROT
+	PLDU 128
+}
+PUSHCONT {
+	NULL
+	NULL
+	NULL
+}
+IFELSE
+PUSHCONT {
+	PUSH S2
+	ISNULL
+	NOT
+}
+PUSHCONT {
+	; expValue
+	;; fetch _royalty
+	;; push identifier addr
+	PUSH S1
+	GETGLOB 18
+	; end expValue
+	;; push identifier value
+	PUSH S2
+	; colValue
+	NEWC
+	STU 128
+	ROTREV
+	PUSHINT 267
+	DICTSETB
+	SETGLOB 18
+	; end colValue
+	PUSH2 S2, S3
+	PUSHINT 267
+	DICTGETNEXT
+	PUSHCONT {
+		DUP
+		ROT
+		PLDU 128
+	}
+	PUSHCONT {
+		NULL
+		NULL
+		NULL
+	}
+	IFELSE
+	BLKDROP2 3, 3
+}
+WHILE
+BLKDROP 4
+; end for
+;; ++
+; expValue
+;; fetch _steps
+GETGLOB 16
+; end expValue
+INC
+; colValue
+SETGLOB 16
+; end colValue
+CALLREF {
+	CALL $_checkSteps_internal_macro$
+}
+;; transfer()
+;; push identifier _addrOwner
+GETGLOB 17
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 111
+STZEROES
+ENDC
+PUSHINT 128
+SENDRAWMSG
+; end function onGetRoyalty
+; end modifier onlyNft
+DROP
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro buyToken
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+; modifier isActive
+;; !
+;; push identifier _paused
+GETGLOB 15
+THROWIF 100
+; function buyToken
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+;; >=
+;; push identifier _price
+GETGLOB 13
+GEQ
+THROWIFNOT 204
+;; get member sender
+GETGLOB 9
+;; push identifier _addrOwner
+GETGLOB 17
+SDEQ
+THROWIF 203
+ACCEPT
+; expValue
+; end expValue
+TRUE
+; colValue
+SETGLOB 15
+; end colValue
+CALLREF {
+	CALL $_genRoyaltyMapping_internal_macro$
+}
+;; decl: callbacks
+;; Remote call INftBase.transferOwnership
+;; push identifier callbacks
+DUP
+;; get member sender
+GETGLOB 9
+;; push identifier _marketOwnerAddr
+GETGLOB 12
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+;; push identifier _addrNft
+GETGLOB 14
+TRUE
+NEWC
+STSLICECONST x6_
+STI 1
+PUSHINT 3
+STZEROES
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 1
+STUR 107
+BLKSWAP 3, 1
+NEWC
+STSLICECONST x1df385c6
+STSLICE
+ROTREV
+NEWC
+STSLICE
+STDICT
+STBREFR
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+DROP
+; end function buyToken
+; end modifier isActive
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro receive_macro
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; function receive
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+;; >=
+;; push identifier _price
+GETGLOB 13
+GEQ
+THROWIFNOT 204
+;; get member sender
+GETGLOB 9
+;; push identifier _addrOwner
+GETGLOB 17
+SDEQ
+THROWIF 203
+;; !
+;; push identifier _paused
+GETGLOB 15
+THROWIF 100
+ACCEPT
+; expValue
+; end expValue
+TRUE
+; colValue
+SETGLOB 15
+; end colValue
+CALLREF {
+	CALL $_genRoyaltyMapping_internal_macro$
+}
+;; decl: callbacks
+;; Remote call INftBase.transferOwnership
+;; push identifier callbacks
+DUP
+;; get member sender
+GETGLOB 9
+;; push identifier _marketOwnerAddr
+GETGLOB 12
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+;; push identifier _addrNft
+GETGLOB 14
+TRUE
+NEWC
+STSLICECONST x6_
+STI 1
+PUSHINT 3
+STZEROES
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 1
+STUR 107
+BLKSWAP 3, 1
+NEWC
+STSLICECONST x1df385c6
+STSLICE
+ROTREV
+NEWC
+STSLICE
+STDICT
+STBREFR
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+DROP
+; end function receive
+CALLREF {
+	CALL $c7_to_c4$
+}
+
+.macro cancelOrder
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+; modifier isActive
+;; !
+;; push identifier _paused
+GETGLOB 15
+THROWIF 100
+; function cancelOrder
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+;; >
+PUSHINT 150000000
+GREATER
+THROWIFNOT 100
+;; get member sender
+GETGLOB 9
+;; push identifier _addrOwner
+GETGLOB 17
+SDEQ
+THROWIFNOT 100
+ACCEPT
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+; expValue
+; end expValue
+TRUE
+; colValue
+SETGLOB 15
+; end colValue
+;; Remote call INftBaseApproval.returnOwnership
+;; push identifier _addrNft
+GETGLOB 14
+TRUE
+NEWC
+STSLICECONST x6_
+STI 1
+PUSHINT 3
+STZEROES
+STSLICE
+PUSHSLICE x00000000000000000000000000005e324f15_
+STSLICER
+ENDC
+PUSHINT 128
+SENDRAWMSG
+; end function cancelOrder
+; end modifier isActive
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro setApprovalCallback
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+;; decode TvmCell
+LDREF
+ENDS
+;; param: payload
+; modifier onlyNft
+;; get member sender
+GETGLOB 9
+;; push identifier _addrNft
+GETGLOB 14
+SDEQ
+THROWIFNOT 100
+; function setApprovalCallback
+ACCEPT
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+;; ++
+; expValue
+;; fetch _steps
+GETGLOB 16
+; end expValue
+INC
+; colValue
+SETGLOB 16
+; end colValue
+CALLREF {
+	CALL $_checkSteps_internal_macro$
+}
+CALLREF {
+	CALL $getRoyalty_internal_macro$
+}
+;; transfer()
+;; push identifier _addrOwner
+GETGLOB 17
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 111
+STZEROES
+ENDC
+PUSHINT 128
+SENDRAWMSG
+;; push identifier payload
+; end function setApprovalCallback
+; end modifier onlyNft
+DROP
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro tokenTransferCallback
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+;; decode TvmCell
+LDREF
+ENDS
+;; param: oldOwner
+;; param: newOwner
+;; param: tokenRoot
+;; param: sendGasToAddr
+;; param: payload
+; modifier onlyNft
+;; get member sender
+GETGLOB 9
+;; push identifier _addrNft
+GETGLOB 14
+SDEQ
+THROWIFNOT 100
+; function tokenTransferCallback
+;; push identifier newOwner
+PUSH S3
+;; push identifier _addrNft
+GETGLOB 14
+;; emit sellConfirmed
+PUSHSLICE xc0000000000000000000000001
+NEWC
+STSLICE
+ROTREV
+NEWC
+STSLICECONST x7a9926b4
+STSLICE
+SWAP
+NEWC
+STSLICE
+STBREFR
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+;; push identifier _marketOwnerAddr
+GETGLOB 12
+CALLREF {
+	CALL $destruct_internal_macro$
+}
+; end function tokenTransferCallback
+; end modifier onlyNft
+BLKDROP 5
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro resetApprovalCallback
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+; modifier onlyNft
+;; get member sender
+GETGLOB 9
+;; push identifier _addrNft
+GETGLOB 14
+SDEQ
+THROWIFNOT 100
+; function resetApprovalCallback
+;; push identifier _addrOwner
+GETGLOB 17
+CALLREF {
+	CALL $destruct_internal_macro$
+}
+; end function resetApprovalCallback
+; end modifier onlyNft
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	destruct_internal
+.type	destruct_internal, @function
+CALL $destruct_internal_macro$
+
+.macro destruct_internal_macro
+;; param: destAddr
+; function destruct
+;; push identifier destAddr
+DUP
+NEWC
+STSLICECONST x42_
+STSLICE
+PUSHINT 111
+STZEROES
+ENDC
+PUSHINT 160
+SENDRAWMSG
+; end function destruct
+DROP
+
+.macro getOfferInfo
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getOfferInfo_internal_macro$
+}
+;; emitting 3 value(s)
+PUSH S3
+PUSHCONT {
+	PUSH S5
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	REVERSE 3, 1
+	BLKSWAP 3, 1
+	NEWC
+	STSLICECONST xa4f5ca8e
+	STU 128
+	STSLICE
+	SWAP
+	NEWC
+	STSLICE
+	STBREFR
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	BLKDROP 3
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getOfferInfo_internal
+.type	getOfferInfo_internal, @function
+CALL $getOfferInfo_internal_macro$
+
+.macro getOfferInfo_internal_macro
+;; ret param: price
+PUSHINT 0
+;; ret param: addrNft
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; ret param: addrOwner
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+; function getOfferInfo
+;; return
+;; push identifier _price
+GETGLOB 13
+;; push identifier _addrNft
+GETGLOB 14
+;; push identifier _addrOwner
+GETGLOB 17
+BLKDROP2 3, 3
+; end function getOfferInfo
+
+.macro c7_to_c4
+GETGLOB 18
+GETGLOB 17
+GETGLOB 16
+GETGLOB 15
+GETGLOB 14
+GETGLOB 13
+GETGLOB 12
+GETGLOB 11
+GETGLOB 10
+GETGLOB 6
+GETGLOB 3
+GETGLOB 2
+NEWC
+STU 256
+STU 64
+STI 1
+STU 256
+STU 128
+BLKSWAP 7, 1
+NEWC
+STSLICE
+STU 128
+BLKSWAP 5, 1
+NEWC
+STSLICE
+STI 1
+STU 256
+ROTREV
+NEWC
+STSLICE
+STDICT
+STBREFR
+STBREFR
+STBREFR
+ENDC
+POP C4
+
+.macro c4_to_c7
+PUSHROOT
+CTOS
+LDU 256      ; pubkey c4
+LDU 64      ; pubkey timestamp c4
+LDI 1       ; pubkey [timestamp] constructor_flag memory
+LDU 256
+LDU 128
+;; load next cell
+LDREF
+ENDS
+CTOS
+LDMSGADDR
+LDU 128
+;; load next cell
+LDREF
+ENDS
+CTOS
+LDMSGADDR
+LDI 1
+LDU 256
+;; load next cell
+LDREF
+ENDS
+CTOS
+LDMSGADDR
+LDDICT
+ENDS
+SETGLOB 18
+SETGLOB 17
+SETGLOB 16
+SETGLOB 15
+SETGLOB 14
+SETGLOB 13
+SETGLOB 12
+SETGLOB 11
+SETGLOB 10
+; pubkey [timestamp] constructor_flag
+SETGLOB 6   ; pubkey [timestamp]
+SETGLOB 3   ; pubkey
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS
+SBITS
+GTINT 1
+PUSHREFCONT {
+	CALL $c4_to_c7$
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHROOT
+	CTOS
+	PLDDICT   ; D
+	; init _ownerPubkey
+	PUSHINT 0
+	SETGLOB 10
+	; init _marketFeeValue
+	PUSHINT 0
+	SETGLOB 11
+	; init _marketOwnerAddr
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SETGLOB 12
+	; init _price
+	PUSHINT 0
+	SETGLOB 13
+	; init _addrNft
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SETGLOB 14
+	; init _paused
+	PUSHINT 0
+	SETGLOB 15
+	; init _steps
+	PUSHINT 0
+	SETGLOB 16
+	; init _addrOwner
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SETGLOB 17
+	; init _royalty
+	NEWDICT
+	SETGLOB 18
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+	PUSHINT 0 ; constructor_flag
+	SETGLOB 6
+	;; init state var: _paused
+	TRUE
+	SETGLOB 15
+	;; init state var: _steps
+	PUSHINT 0
+	SETGLOB 16
+}
+IFELSE
+
+.internal-alias :main_internal, 0
+.internal :main_internal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function: main_internal
+;; param: contract_balance
+;; param: msg_balance
+;; param: int_msg_info
+;; param: msg_body_slice
+;; param: transaction_type
+PUSH S2
+CTOS
+LDU 4       ; bounced tail
+LDMSGADDR   ; bounced src tail
+DROP
+SETGLOB 9
+MODPOW2 1
+IFRET
+PUSH S1    ; body
+SEMPTY     ; isEmpty
+DUP        ; isEmpty isEmpty
+PUSHCONT {
+	DROP    ;
+	PUSH S1 ; body
+	LDUQ 32  ; [funcId] body' ok
+	THROWIFNOT 60
+	PUSH S1 ; funcId body' funcId
+	EQINT 0 ; funcId body' isZero
+	DUP     ; funcId body' isZero isZero
+	PUSHCONT {
+ 		; funcId body' isZero
+		BLKDROP2 2, 1; isZero
+	}
+	IF
+}
+IFNOT
+; [funcId body'] doReceive
+IFJMPREF {
+	CALL $receive_macro$
+}
+SWAP
+CALLREF {
+	CALL $public_function_selector$
+}
+GETGLOB 7
+ISNULL
+THROWIF 60
+
+.internal-alias :main_external, -1
+.internal :main_external
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SETGLOB 9
+PUSH S1
+CALLREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHINT 512
+	LDSLICEX ; signatureSlice msgSlice
+	DUP      ; signatureSlice msgSlice msgSlice
+	HASHSU   ; signatureSlice msgSlice hashMsgSlice
+	SWAP  ; signatureSlice hashMsgSlice msgSlice
+	LDU 1 ; signatureSlice hashMsgSlice havePubkey msgSlice
+	SWAP  ; signatureSlice hashMsgSlice msgSlice havePubkey
+	PUSHCONT {
+		LDU 256       ; signatureSlice hashMsgSlice pubkey msgSlice
+		XCHG s3
+		SWAP
+	}
+	PUSHCONT {
+		XCHG s2
+		GETGLOB 2
+	}
+	IFELSE
+	CHKSIGNU      ; msgSlice isSigned
+	THROWIFNOT 40 ; msgSlice
+}
+PUSHCONT {
+	LDU 1      ; havePubkey msgSlice
+	SWAP       ; msgSlice havePubkey
+	THROWIF 58 ; msgSlice
+}
+IFELSE
+LDU 64                         ; timestamp msgSlice
+SWAP                           ; msgSlice timestamp
+CALL $replay_protection_macro$ ; msgSlice
+LDU 32  ; expireAt msgSlice
+SWAP    ; msgSlice expireAt
+NOW     ; msgSlice expireAt now
+GREATER ; msgSlice expireAt>now
+THROWIFNOT 57
+LDU  32 ; funcId body
+SWAP    ; body funcId
+CALLREF {
+	CALL $public_function_selector$
+}
+GETGLOB 7
+ISNULL
+THROWIF 60
+
+.macro _paused
+DROP
+ENDS
+CALLREF {
+	CALL $c4_to_c7$
+}
+GETGLOB 15
+PUSH S1
+PUSHCONT {
+	PUSHSLICE xc0000000000000000000000000c1e9ff8e
+	NEWC
+	STSLICE
+	STI 1
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+IF
+TRUE
+SETGLOB 7
+
+.macro _steps
+DROP
+ENDS
+CALLREF {
+	CALL $c4_to_c7$
+}
+GETGLOB 16
+PUSH S1
+PUSHCONT {
+	PUSHSLICE xc0000000000000000000000000b76c671a
+	NEWC
+	STSLICE
+	STU 256
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+IF
+TRUE
+SETGLOB 7
+
+.macro public_function_selector
+DUP
+PUSHINT 1240018645
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 620087950
+	EQUAL
+	IFJMPREF {
+		CALL $getOfferInfo$
+	}
+	DUP
+	PUSHINT 929851162
+	EQUAL
+	IFJMPREF {
+		CALL $_steps$
+	}
+	DUP
+	PUSHINT 1105854350
+	EQUAL
+	IFJMPREF {
+		CALL $_paused$
+	}
+	DUP
+	PUSHINT 1240018645
+	EQUAL
+	IFJMPREF {
+		CALL $buyToken$
+	}
+}
+DUP
+PUSHINT 1832990616
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 1277708168
+	EQUAL
+	IFJMPREF {
+		CALL $constructor$
+	}
+	DUP
+	PUSHINT 1400480812
+	EQUAL
+	IFJMPREF {
+		CALL $resetApprovalCallback$
+	}
+	DUP
+	PUSHINT 1525612492
+	EQUAL
+	IFJMPREF {
+		CALL $setApprovalCallback$
+	}
+	DUP
+	PUSHINT 1832990616
+	EQUAL
+	IFJMPREF {
+		CALL $tokenTransferCallback$
+	}
+}
+DUP
+PUSHINT 1985888162
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 1912371251
+	EQUAL
+	IFJMPREF {
+		CALL $cancelOrder$
+	}
+	DUP
+	PUSHINT 1985888162
+	EQUAL
+	IFJMPREF {
+		CALL $onGetRoyalty$
+	}
+}
